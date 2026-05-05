@@ -1,0 +1,98 @@
+body 
+{
+    background-image: url("/images/background_image.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+table 
+{
+    border-collapse: separate;
+    border-spacing: 2px;
+    border: 1px solid #fc97f9;
+}
+
+input, select
+{
+    font-size: 0.75rem;
+    padding: 4px 8px;
+}
+
+.my-table tbody tr:hover 
+{
+    background-color: #f2f2f2;
+}
+
+.my-table thead 
+{
+    background-color: #fc97f9 !important;
+    color: black !important;
+}
+
+.my-table tbody 
+{
+    background-color: #ffffff;
+}
+
+button 
+{
+    background-color: #fa78f8 !important;
+    border: 2px solid #fc90fa !important;
+    border-radius: 8px !important;
+    color: #333 !important;
+	font-size: 0.75rem;
+	padding: 4px 8px;
+}
+
+button:hover 
+{
+    background-color: #fc3ff9 !important;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="password"],
+.mr-2 
+{
+    background-color: #fcc0fb;
+    border: 1px solid #fc90fa;
+    border-radius: 4px;
+    color: #333;
+	font-size: 0.75rem;
+	padding: 4px 8px;
+}
+
+input::placeholder,
+select::placeholder 
+{
+    color: gray;
+}
+
+html, body 
+{
+	height: 100%;
+	margin: 0;
+}
+
+.container-fluid,
+.row,
+.col-md-8,
+.col-md-4 
+{
+	height: 100%;
+}
+
+.col-md-8,
+.col-md-4 
+{
+	display: flex;
+	flex-direction: column;
+}
+
+.scrollable-section 
+{
+	flex-grow: 1;
+	overflow-y: auto;
+	padding-right: 10px;
+}

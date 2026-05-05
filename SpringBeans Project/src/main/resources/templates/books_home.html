@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Library Management System</title>
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+		<link rel="stylesheet" href="/styles/style.css">
+	</head>
+	<body>
+		<div class="container-fluid min-vh-100">
+			<div class="row h-100">
+				<div class="col-md-8 d-flex flex-column border-right p-3">
+					<h4 class="mb-3">Book List</h4>
+					<div class="scrollable-section">
+						<table class="table table-bordered my-table">
+							<thead class="thead">
+								<tr>
+									<th>Name</th>
+									<th>Author</th>
+									<th>Genre</th>
+									<th>ID</th>
+									<th>Loan Date</th>
+									<th>Due Date</th>
+									<th>Taker's ID</th>
+									<th colspan="2">Actions</th>
+								</tr>
+							</thead>
+							<tbody id="bookTableBody">
+								<tr th:each="book : ${listofbooks}">
+									<td th:text="${book.name}"></td>
+									<td th:text="${book.author}"></td>
+									<td th:text="${book.genre}"></td>
+									<td th:text="'BIL' + ${book.id}"></td>
+									<td th:text="${book.loanDate}"></td>
+									<td th:text="${book.dueDate}"></td>
+									<td th:text="${book.takersId != null} ? 'BT' + ${book.takersId} : ''"></td>
+									<td>
+										<a th:href="@{/deleteBook/{id}(id=${book.id})}">
+											<img src="/images/delete.png" width="20">
+										</a>
+									</td>
+									<td>
+										<a th:href="@{/updateBook/{id}(id=${book.id})}">
+											<img src="/images/update.png" width="30">
+										</a>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				
+				<div class="col-md-4 d-flex flex-column p-4">
+					<div class="scrollable-section">
+						<h5>Update Book</h5>
+						<form th:action="@{/updateBook}" th:object="${selectedbook}" method="post" autocomplete="off" class="mb-3">
+							<div class="form-group">
+								<input type="text" class="form-control" th:field="*{name}" placeholder="Name">
+							</div>
+							<div class="form-group">
+								<input type="text" class="form-control" th:field="*{author}" placeholder="Author">
+							</div>
+							<div class="form-group">
+								<input type="text" class="form-control" th:field="*{genre}" placeholder="Genre">
+							</div>
+							<div class="form-group">
+								<input type="text" class="form-control" th:value="${selectedbook.id > 0} ? 'BIL' + ${selectedbook.id} : ''"  name="idRaw" placeholder="ID">
+							</div>
+							<div class="form-group">
+								<input type="date" class="form-control" th:field="*{loanDate}">
+							</div>
+							<div class="form-group">
+								<input type="date" class="form-control" th:field="*{dueDate}">
+							</div>
+							<div class="form-group">
+								<input type="text" class="form-control" th:value="${selectedbook.takersId != null} ? 'BT' + ${selectedbook.takersId} : ''" name="takersIdRaw" placeholder="Taker's ID">
+							</div>
+							<button type="submit" class="btn btn-primary btn-block">Update</button>
+						</form>
+			
+						<h5>Add Book</h5>
+						<form action="/addBook" method="post" autocomplete="off" class="mb-3">
+							<div class="form-group">
+								<input type="text" class="form-control" name="name" placeholder="Name">
+							</div>
+							<div class="form-group">
+								<input type="text" class="form-control" name="author" placeholder="Author">
+							</div>
+							<div class="form-group">
+								<input type="text" class="form-control" name="genre" placeholder="Genre">
+							</div>
+							<div class="form-group">
+								<input type="text" class="form-control" name="idRaw" placeholder="ID">
+							</div>
+							<div class="form-group">
+								<input type="date" class="form-control" name="loanDate">
+							</div>
+							<div class="form-group">
+								<input type="date" class="form-control" name="dueDate">
+							</div>
+							<div class="form-group">
+								<input type="text" class="form-control" name="takersIdRaw" placeholder="Taker's ID">
+							</div>
+							<button type="submit" class="btn btn-success btn-block">Add</button>
+						</form>
+			
+						<div class="form-group d-flex">
+							<select id="searchField" class="form-control mr-2">
+								<option value="name">Name</option>
+								<option value="author">Author</option>
+								<option value="genre">Genre</option>
+								<option value="id">ID</option>
+								<option value="takersId">Taker's ID</option>
+							</select>
+							<input type="text" id="searchBox" class="form-control" placeholder="Search...">
+						</div>
+			
+						<form action="/takers_home" method="get" class="mb-2">
+							<button type="submit" class="btn btn-info btn-block">See Takers</button>
+						</form>
+						<form action="/login" method="get">
+							<button type="submit" class="btn btn-danger btn-block">Logout</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+		<script>
+			document.getElementById("searchBox").addEventListener("input", function() 
+			{
+			    const query = this.value;
+			    const field = document.getElementById("searchField").value;
+			    
+			    let url;
+			    if (query.trim() === "") 
+				{
+			        url = "/allBooks";
+			    } 
+				else 
+				{
+			        url = `/searchBooks?field=${encodeURIComponent(field)}&query=${encodeURIComponent(query)}`;
+			    }
+
+			    fetch(url)
+			        .then(response => response.json())
+			        .then(data => {
+			            const tbody = document.getElementById("bookTableBody");
+			            tbody.innerHTML = "";
+
+			            data.forEach(book => 
+						{
+			                const row = document.createElement("tr");
+			                row.innerHTML = `
+			                    <td>${book.name}</td>
+			                    <td>${book.author}</td>
+			                    <td>${book.genre}</td>
+			                    <td>BIL${book.id}</td>
+			                    <td>${book.loanDate || ""}</td>
+			                    <td>${book.dueDate || ""}</td>
+			                    <td>${book.takersId ? 'BT' + book.takersId : ''}</td>
+			                    <td><a href="/deleteBook/${book.id}"><img src="/images/delete.png" width="20"></a></td>
+			                    <td><a href="/updateBook/${book.id}"><img src="/images/update.png" width="30"></a></td>
+			                `;
+			                tbody.appendChild(row);
+			            });
+			        })
+			});
+		</script>
+	</body>
+</html>
